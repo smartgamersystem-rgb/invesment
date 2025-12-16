@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Crypto Strategy Dashboard - Osmin</title>
+
+<style>
+body{
+    background:#0f0f0f;
+    color:#f0f0f0;
+    font-family:Arial, sans-serif;
+    margin:0;
+}
+header{
+    background:#1a1a1a;
+    text-align:center;
+    padding:20px;
+    font-size:24px;
+    font-weight:bold;
+    color:#ffd700;
+}
+.lang-buttons{
+    text-align:center;
+    margin:15px 0;
+}
+.lang-buttons button{
+    padding:8px 14px;
+    margin:0 5px;
+    font-size:14px;
+    cursor:pointer;
+    border:none;
+    border-radius:6px;
+    font-weight:bold;
+}
+.container{
+    max-width:900px;
+    margin:20px auto;
+    background:#1a1a1a;
+    padding:25px;
+    border-radius:15px;
+    box-shadow:0 0 20px rgba(255,215,0,.25);
+}
+label{
+    display:block;
+    margin-top:10px;
+}
+input, select{
+    width:100%;
+    padding:10px;
+    margin-top:5px;
+    border-radius:8px;
+    border:none;
+}
+button.calc{
+    margin-top:15px;
+    padding:12px;
+    width:100%;
+    font-size:18px;
+    background:#ffd700;
+    border:none;
+    border-radius:10px;
+    font-weight:bold;
+    cursor:pointer;
+}
+.result{
+    margin-top:15px;
+    background:#262626;
+    padding:15px;
+    border-radius:10px;
+    text-align:center;
+}
+canvas{
+    margin-top:30px;
+}
+.note{
+    margin-top:30px;
+    padding:15px;
+    background:#262626;
+    border-radius:10px;
+    font-size:14px;
+    color:#ccc;
+    text-align:center;
+}
+footer{
+    text-align:center;
+    margin:30px 0 15px;
+    font-size:14px;
+    color:#aaa;
+}
+</style>
+</head>
+
+<body>
+
+<header id="title">Crypto Investment Strategy — Osmin</header>
+
+<div class="lang-buttons">
+    <button onclick="setLanguage('es')">🇪🇸 Español</button>
+    <button onclick="setLanguage('en')">🇺🇸 English</button>
+</div>
+
+<div class="container">
+
+<label id="labelCrypto">Cryptocurrency</label>
+<select id="crypto">
+    <option>XRP</option>
+    <option>Bitcoin</option>
+    <option>Cardano</option>
+</select>
+
+<label id="labelInvestment">Investment Amount ($)</label>
+<input type="number" id="investment" placeholder="Enter amount">
+
+<label id="labelMonths">Months</label>
+<select id="months">
+    <option value="1">1</option>
+    <option value="2">2</option>
+</select>
+
+<button class="calc" onclick="calculate()" id="calcBtn">
+Calculate Profit
+</button>
+
+<div class="result" id="result">
+Result will appear here
+</div>
+
+<canvas id="lineChart"></canvas>
+
+<hr style="margin:40px 0; border:1px solid #333;">
+
+<h2 id="strategyTitle" style="text-align:center;color:#ffd700;">
+Investment Strategy (Target Vision)
+</h2>
+
+<canvas id="strategyChart"></canvas>
+
+<div class="note" id="note-es">
+⚠️ <strong>Nota:</strong> Este contenido es únicamente con fines educativos e informativos.
+No constituye asesoría financiera ni una recomendación de inversión.
+Invertir en criptomonedas implica riesgos.
+</div>
+
+<div class="note" id="note-en" style="display:none;">
+⚠️ <strong>Note:</strong> This content is for educational and informational purposes only.
+It does not constitute financial advice or an investment recommendation.
+Investing in cryptocurrencies involves risks.
+</div>
+
+</div>
+
+<footer>
+&copy; 2025 Osmin | Instagram: <strong>@manuellovesweety</strong> | Miami Downtown
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+let currentLang = "en";
+let lineChartObj;
+
+function calculate(){
+    const investment = parseFloat(document.getElementById("investment").value);
+    const months = parseInt(document.getElementById("months").value);
+    const multiplier = 6;
+
+    if(!investment || investment <= 0){
+        alert("Enter a valid amount");
+        return;
+    }
+
+    const profit = investment * multiplier * months;
+
+    document.getElementById("result").innerHTML =
+        currentLang === "es"
+        ? `Ganancia estimada: <strong>$${profit.toLocaleString()}</strong>`
+        : `Estimated profit: <strong>$${profit.toLocaleString()}</strong>`;
+
+    if(lineChartObj) lineChartObj.destroy();
+
+    const ctx = document.getElementById("lineChart");
+    lineChartObj = new Chart(ctx,{
+        type:"line",
+        data:{
+            labels:["Month 1","Month 2"],
+            datasets:[{
+                label:"Growth",
+                data:[investment*multiplier, investment*multiplier*2],
+                borderWidth:3,
+                fill:true
+            }]
+        }
+    });
+}
+
+function setLanguage(lang){
+    currentLang = lang;
+    document.getElementById("note-es").style.display = lang === "es" ? "block" : "none";
+    document.getElementById("note-en").style.display = lang === "en" ? "block" : "none";
+
+    document.getElementById("title").innerText =
+        lang === "es" ? "Estrategia de Inversión Cripto — Osmin" : "Crypto Investment Strategy — Osmin";
+    document.getElementById("labelCrypto").innerText =
+        lang === "es" ? "Criptomoneda" : "Cryptocurrency";
+    document.getElementById("labelInvestment").innerText =
+        lang === "es" ? "Monto a invertir ($)" : "Investment Amount ($)";
+    document.getElementById("labelMonths").innerText =
+        lang === "es" ? "Meses" : "Months";
+    document.getElementById("calcBtn").innerText =
+        lang === "es" ? "Calcular Ganancia" : "Calculate Profit";
+    document.getElementById("strategyTitle").innerText =
+        lang === "es" ? "Estrategia de Inversión (Visión)" : "Investment Strategy (Target Vision)";
+}
+
+new Chart(document.getElementById("strategyChart"),{
+    type:"pie",
+    data:{
+        labels:[
+            "XRP (Buy $2.50 → Sell $6)",
+            "Bitcoin (Buy $89k → Sell $180k)",
+            "Cardano (Sell $2.10)",
+            "Memecoin / Jupiter / Custodian"
+        ],
+        datasets:[{
+            data:[30,30,20,20],
+            backgroundColor:["#ffd700","#f7931a","#3cc8c8","#9b59b6"]
+        }]
+    }
+});
+</script>
+
+</body>
+</html>
+
